@@ -26,6 +26,7 @@ export class MyRoom extends Room<MyRoomState> {
       } else {
         axios.get('https://promo.battlemon.com/api/lemon/' + message.playerId)
           .then(result => {
+            console.log(result.data)
             this.pushData(result.data, client.sessionId)
           }).catch((error) => {
           if (error.response) {
