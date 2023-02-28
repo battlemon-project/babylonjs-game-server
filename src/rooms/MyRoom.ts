@@ -7,6 +7,8 @@ export class MyRoom extends Room<MyRoomState> {
     this.setState(new MyRoomState());
     
     this.onMessage('createPlayer', (client, message) => {
+      console.info('New player request: ' + message.playerId)
+      
       if (message.playerId.includes('guest_')) {
         const data: any = {
           id: message.playerId,
