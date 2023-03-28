@@ -1,8 +1,7 @@
-import assert from 'assert';
 import { ColyseusTestServer, boot } from '@colyseus/testing';
 
 import appConfig from '../../arena.config';
-import { HubSchema } from './hub.schema';
+import { HubSchema, Quest } from './hub.schema';
 
 describe('testing your Colyseus app', () => {
   let colyseus: ColyseusTestServer;
@@ -11,13 +10,29 @@ describe('testing your Colyseus app', () => {
   afterAll(async () => colyseus.shutdown());
   beforeEach(async () => await colyseus.cleanup());
 
-  it('connecting into a room', async () => {
+  it('private data', async () => {
     const room = await colyseus.createRoom<HubSchema>('hub', {});
     const client1 = await colyseus.connectTo(room);
+    const client2 = await colyseus.connectTo(room);
 
-    assert.strictEqual(client1.sessionId, room.clients[0].sessionId);
+    client1.send('createPlayer', { playerId: 'guest_1' });
+    await room.waitForNextMessage();
+
+    client2.send('createPlayer', { playerId: 'guest_2' });
+    await room.waitForNextMessage();
+
+    room.state.players.forEach((player, idx) => {
+      const questMock = new Quest();
+      questMock.activationTimestamp = idx;
+      player.personal.quest = questMock;
+    });
 
     await room.waitForNextPatch();
-    assert.deepStrictEqual({ players: [] }, client1.state.toJSON());
+
+    expect(client2.state.players[0].personal).toBeUndefined();
+    const client2Personal = client2.state.players[1].personal;
+    expect(client2Personal).not.toBeUndefined();
+    expect(client2Personal.quest).not.toBeUndefined();
+    expect(client2Personal.quest.activationTimestamp).toBe(1);
   });
 });

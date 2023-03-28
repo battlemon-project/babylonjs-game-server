@@ -52,7 +52,9 @@ export class Hub extends Room<HubSchema> {
     const playerIndex = this.state.players.findIndex(
       (player) => player.clientSessionId === client.sessionId
     );
-    this.state.players.splice(playerIndex, 1);
+    if (playerIndex != -1) {
+      this.state.players.splice(playerIndex, 1);
+    }
 
     console.log(client.sessionId, 'left!');
   }
