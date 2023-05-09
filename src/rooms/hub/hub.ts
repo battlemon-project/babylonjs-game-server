@@ -46,8 +46,9 @@ export class Hub extends Room<HubSchema> {
     });
   }
 
-  onAuth(client: Client, options: any, request?: IncomingMessage) {
+  onAuth(client: Client, options: any) {
     //TODO: verify token
+    return true; //TEMP skip verification
   }
 
   onJoin(client: Client, options: any) {
