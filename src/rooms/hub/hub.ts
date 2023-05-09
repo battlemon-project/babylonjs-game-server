@@ -1,7 +1,9 @@
 import { Room, Client } from 'colyseus';
 import { Item, HubSchema, Player, Property } from './hub.schema';
 import axios from 'axios';
+import { IncomingMessage } from 'http';
 
+//TODO: needs modification
 export class Hub extends Room<HubSchema> {
   onCreate(options: any) {
     this.setState(new HubSchema());
@@ -44,7 +46,12 @@ export class Hub extends Room<HubSchema> {
     });
   }
 
+  onAuth(client: Client, options: any, request?: IncomingMessage) {
+    //TODO: verify token
+  }
+
   onJoin(client: Client, options: any) {
+    //TODO: add player to scheme
     console.log(client.sessionId, 'joined!');
   }
 
